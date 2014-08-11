@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+BASEPATH=$SCRIPTPATH
+
+ln -s $BASEPATH/tmux/.tmux.conf $HOME/.tmux.config
+ln -s $BASEPATH/tmux/.tmux.osx.conf $HOME/.tmux.osx.config
+
+ln -s $BASEPATH/vim/.vimrc $HOME/.vimrc
+ln -s $BASEPATH/vim/.vim $HOME/.vim

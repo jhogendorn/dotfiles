@@ -1,0 +1,6 @@
+[submodule "iterm/colours"]
+	path = iterm/colours
+	url = https://github.com/mbadolato/iTerm2-Color-Schemes.git
+[submodule "vim/themes/molokai"]
+	path = vim/themes/molokai
+	url = https://github.com/tomasr/molokai.git

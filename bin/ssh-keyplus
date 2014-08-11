@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# This script creates strong keys easily. Based on the blog post at:
+# http://martin.kleppmann.com/2013/05/24/improving-security-of-ssh-private-keys.html
+
+WORKINGDIR=$HOME/.ssh/keys
+
+cd $WORKINGDIR
+
+umask 0077
+
+if [ ! -e $1 ]
+then
+  echo "Creating Normal Key"
+  ssh-keygen -t rsa -f $1 &>/dev/null
+fi
+
+if [ -f $1 ]
+then
+  echo "Creating PKCS#8 Key"
+  openssl pkcs8 -topk8 -v2 des3 -in $1 -out $1.pkcs8
+fi

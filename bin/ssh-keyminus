@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cd $HOME/.ssh/keys
+
+echo "Backing up Private key"
+cp $1 $1.pkcs8
+umask 0077
+
+echo "Decrypting Private key"
+openssl rsa -in $1 -out $1
+echo "ReEncrypting Private key"
+openssl rsa -in $1 -aes256 -out $1
+
+echo "Recreating Public key"
+ssh-keygen -y -f $1 > $1.pub

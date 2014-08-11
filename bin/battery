@@ -1,0 +1,48 @@
+#!/bin/bash
+
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+BASEPATH=$SCRIPTPATH
+
+DATADIR="$HOME/.data"
+DATABASE="$DATADIR/logger_$(date +%Y).db"
+
+read_simple () {
+    local IFS=" = "
+    read ENTITY CONTENT
+}
+
+trim () {
+  temp="${1%$2}"
+  temp="${temp#$2}"
+  echo $temp
+}
+
+BatterySimple=$(ioreg -r -d1 -c AppleSmartBattery | tail -n +3 | tail -r | tail -n +4)
+
+colspec=()
+colname=()
+colvalue=()
+
+while read_simple; do
+  CONTENT=$(trim "$CONTENT" \")                 # Remove surrounding quotes
+  CONTENT=${CONTENT//\'/\'\'}                   # Fix single quotes so sqlite doesn't barf
+
+  #echo "$(trim $ENTITY \") => $CONTENT"        # For debugging operations
+
+  colspec+=("$(trim $ENTITY \") TEXT NOT NULL") # Define the columns of our table
+  colname+=("$(trim $ENTITY \")")               # Define just the column names
+  colvalue+=("'$CONTENT'")                      # Values for the insert
+
+done <<<"$BatterySimple"
+
+touch $DATABASE
+
+IFS=,
+TIMESTAMP=$(date +%s)
+
+
+sqlite3 $DATABASE <<SQL
+CREATE TABLE IF NOT EXISTS battery( id INTEGER PRIMARY KEY AUTOINCREMENT, ts CHAR(15) NOT NULL, ${colspec[*]});
+INSERT INTO battery ( ts,${colname[*]} ) VALUES ( $TIMESTAMP,${colvalue[*]});
+SQL
+
