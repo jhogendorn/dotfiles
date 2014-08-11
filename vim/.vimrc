@@ -20,7 +20,7 @@ endif
     set nocompatible               " Be iMproved
 
     " Required:
-    set runtimepath+=~/.vim/bundle/neobundle/
+    set runtimepath+=~/.vim/neobundle/
   endif
 
   " Required:
