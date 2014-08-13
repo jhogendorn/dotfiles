@@ -425,12 +425,6 @@ let g:ruby_path = system('rvm current')
 
 "}}}
 
-" PLUGINS {{{
-" =======
-
-
-"}}}
-
 " STATUSLINE BUILD {{{
 " ================
 "
@@ -454,6 +448,8 @@ set laststatus=2				" Always show the file status line
         let g:airline_symbols.readonly = ''
         let g:airline_symbols.linenr = ''
     " }}}
+
+" }}}
 
 " FILE SPECIFIC SETTINGS {{{
 " ======================
@@ -491,6 +487,7 @@ set laststatus=2				" Always show the file status line
 	" Fly between buffers
 	nnoremap <Leader>l :ls<CR>:b<space>
 
+  " Make Y work like everything else
 	map Y y$
 "}}}
 
