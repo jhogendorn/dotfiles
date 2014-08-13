@@ -1,0 +1,50 @@
+[hub]
+  protocol = https
+[core]
+	filemode = false
+	trustctime = false
+	pager = less -F -X
+  # excludesfile = /Users/joshua/.gitignore_global
+  excludesfile = ~/.gitignore
+  editor = vim
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[difftool]
+	prompt = false
+[diff]
+	tool = Kaleidoscope
+[user]
+	name = Joshua Hogendorn
+	email = jhogendorn@gmail.com
+[github]
+	user = jhogendorn
+	token = 093d0f077ccbfb2c86fed3619cd0d982
+	username = jhogendorn
+	password = !security 2>&1 >/dev/null find-generic-password -s github.password -g | cut -d '\"' -f 2
+[gist]
+	private = no
+	browse = yes
+[alias]
+  co = checkout
+  promote = !$ZSH/bin/git-promote
+  wtf     = !$ZSH/bin/git-wtf
+  rank-contributers = !$ZSH/bin/git-rank-contributers
+  count   = !git shortlog -sn
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+  ui = true
+[init]
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	trustExitCode = true
+  keepBackup = false
+	prompt = false
+[merge]
+	tool = Kaleidoscope
+[push]
+	default = matching
+[mergetool]
+	prompt = false

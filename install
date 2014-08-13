@@ -8,3 +8,6 @@ ln -s $BASEPATH/tmux/.tmux.osx.conf $HOME/.tmux.osx.config
 
 ln -s $BASEPATH/vim/.vimrc $HOME/.vimrc
 ln -s $BASEPATH/vim/.vim $HOME/.vim
+
+ln -s $BASEPATH/git/.gitconfig $HOME/.gitconfig
+ln -s $BASEPATH/git/.gitignore $HOME/.gitignore
