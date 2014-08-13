@@ -138,7 +138,7 @@ endif
 
     " NERDCommenter {{{
     NeoBundle "scrooloose/nerdcommenter", {
-    \  'lazy' : 1,
+    \  'lazy' : 0,
     \  'autoload' : {
     \    'commands' : [ 'NERDComComment','NERDComNestedComment','NERDComToggleComment','NERDComMinimalComment','NERDComInvertComment','NERDComSexyComment','NERDComYankComment','NERDComEOLComment','NERDComAppendComment','NERDComInsertComment','NERDComAltDelim','NERDComAlignedComment','NERDComUncommentLine' ]
     \  }
