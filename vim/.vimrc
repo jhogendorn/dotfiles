@@ -311,6 +311,12 @@ endif
     \}
     " }}}
 
+    " Lang: PHP {{{
+    NeoBundle "rayburgemeestre/phpfolding.vim", {
+    \  'lazy' : 0,
+    \}
+    " }}}
+
   " }}}
 
   call neobundle#end()
