@@ -11,3 +11,5 @@ ln -s $BASEPATH/vim/.vim $HOME/.vim
 
 ln -s $BASEPATH/git/.gitconfig $HOME/.gitconfig
 ln -s $BASEPATH/git/.gitignore $HOME/.gitignore
+
+ln -s $BASEPATH/zsh/.zshrc $HOME/.zshrc
