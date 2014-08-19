@@ -35,13 +35,70 @@ endif
   " MY BUNDLES {{{
     " Vimproc {{{
     NeoBundle 'Shougo/vimproc.vim', {
-    \ 'build' : {
-    \     'windows' : 'tools\\update-dll-mingw',
-    \     'cygwin' : 'make -f make_cygwin.mak',
-    \     'mac' : 'make -f make_mac.mak',
-    \     'unix' : 'make -f make_unix.mak',
-    \    },
-    \ }
+    \  'lazy' : 0,
+    \  'build' : {
+    \    'windows' : 'tools\\update-dll-mingw',
+    \    'cygwin' : 'make -f make_cygwin.mak',
+    \    'mac' : 'make -f make_mac.mak',
+    \    'unix' : 'make -f make_unix.mak',
+    \  },
+    \}
+    " }}}
+
+    " Unite {{{
+    NeoBundle 'Shougo/unite.vim', {
+    \  'lazy' : 0,
+    \}
+    let bundle = neobundle#get('unite.vim')
+    function! bundle.hooks.on_post_source(bundle)
+      " Search Recent Files
+      nnoremap <silent> <Leader>m :Unite -buffer-name=recent -winheight=10 file_mru<cr>
+      " Search open buffers
+      nnoremap <Leader>b :Unite -buffer-name=buffers -winheight=10 buffer<cr>
+      " Search in contents of files
+      nnoremap <Leader>f :Unite grep:.<cr>
+
+      " CtrlP search
+      call unite#filters#matcher_default#use(['matcher_fuzzy'])
+      call unite#filters#sorter_default#use(['sorter_rank'])
+      call unite#custom#source('file_rec/async','sorters','sorter_rank')
+      call unite#custom#profile('buffer', 'ignorecase', 1)
+      " replacing unite with ctrl-p
+      nnoremap <silent> <C-p> :Unite -start-insert -buffer-name=files -winheight=10 file_rec/async<cr>
+
+      " General Settings
+      let g:unite_source_history_yank_enable = 1
+      let g:unite_data_directory='~/.vim/tmp/unite'
+      let g:unite_source_rec_max_cache_files=5000
+      let g:unite_enable_start_insert = 1
+      let g:unite_split_rule = "botright"
+      let g:unite_force_overwrite_statusline = 0
+      let g:unite_winheight = 10
+
+      " Ignore things
+      call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
+            \ 'ignore_pattern', join([
+            \ '\.git/',
+            \ '\app/cache',
+            \ '\vendor/',
+            \ '\.vagrant/',
+            \ '\.ebextensions/'
+            \ ], '\|'))
+
+      " Shortcut behaviours whilst in unite mode
+      autocmd FileType unite call s:unite_settings()
+
+      function! s:unite_settings()
+        "imap <buffer> <C-j> <NOP>
+        imap <buffer> <C-j>   <Plug>(unite_select_next_line)
+        imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
+        imap <silent><buffer><expr> <C-x> unite#do_action('split')
+        imap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+        imap <silent><buffer><expr> <C-t> unite#do_action('tabopen')
+
+        nmap <buffer> <ESC> <Plug>(unite_exit)
+      endfunction
+    endfunction
     " }}}
 
     " NERDTree {{{
@@ -315,6 +372,12 @@ endif
     NeoBundle "rayburgemeestre/phpfolding.vim", {
     \  'lazy' : 0,
     \}
+    let bundle = neobundle#get('phpfolding.vim')
+    function! bundle.hooks.on_post_source(bundle)
+      map <F5> <Esc>:EnableFastPHPFolds<Cr>
+      map <F6> <Esc>:EnablePHPFolds<Cr>
+      map <F7> <Esc>:DisablePHPFolds<Cr>
+    endfunction
     " }}}
 
   " }}}
