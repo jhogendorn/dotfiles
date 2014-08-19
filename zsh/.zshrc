@@ -14,7 +14,7 @@ compinit
 
 PATH=./bin:$HOME/.dotfiles/bin:/usr/local/bin:$PATH
 
-source ~/.zsh/antigen/antigen.zsh
+source ~/.dotfiles/zsh/antigen/antigen.zsh
 
 antigen use oh-my-zsh
 
