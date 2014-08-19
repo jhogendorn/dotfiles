@@ -12,7 +12,7 @@ zstyle :compinstall filename "$HOME/.zshrc"
 autoload -Uz compinit
 compinit
 
-PATH=/usr/local/bin:$PATH
+PATH=./bin:$HOME/.dotfiles/bin:/usr/local/bin:$PATH
 
 source ~/.zsh/antigen/antigen.zsh
 
