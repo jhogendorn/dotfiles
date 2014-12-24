@@ -4,6 +4,7 @@ HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
 setopt appendhistory autocd nomatch
+unsetopt nomatch
 bindkey -v
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
@@ -13,6 +14,10 @@ autoload -Uz compinit
 compinit
 
 PATH=./bin:$HOME/.dotfiles/bin:/usr/local/bin:$PATH
+
+export LC_CTYPE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 source ~/.dotfiles/zsh/antigen/antigen.zsh
 
