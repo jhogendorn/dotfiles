@@ -85,4 +85,9 @@ alias gr='git rebase'
 
 alias gcdr='cd ./$(git rev-parse --show-cdup)'
 
+source $HOME/.dotfiles/zsh/functions/*
+source /usr/local/bin/virtualenvwrapper.sh
+
 #zprof
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
