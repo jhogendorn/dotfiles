@@ -36,6 +36,7 @@ endif
     " Vimproc {{{
     NeoBundle 'Shougo/vimproc.vim', {
     \  'lazy' : 0,
+    \  'disabled': 0,
     \  'build' : {
     \    'windows' : 'tools\\update-dll-mingw',
     \    'cygwin' : 'make -f make_cygwin.mak',
@@ -62,7 +63,7 @@ endif
       call unite#filters#matcher_default#use(['matcher_fuzzy'])
       call unite#filters#sorter_default#use(['sorter_rank'])
       call unite#custom#source('file_rec/async','sorters','sorter_rank')
-      call unite#custom#profile('buffer', 'ignorecase', 1)
+      call unite#custom#profile('buffer', 'context.ignorecase', 1)
       " replacing unite with ctrl-p
       nnoremap <silent> <C-p> :Unite -start-insert -buffer-name=files -winheight=10 file_rec/async<cr>
 
@@ -283,15 +284,11 @@ endif
 
     " Slime {{{
     NeoBundle "jpalardy/vim-slime", {
-    \  'lazy' : 0
+    \  'lazy' : 0,
+    \  'disabled': 1
     \}
     let bundle = neobundle#get('vim-slime')
     function! bundle.hooks.on_post_source(bundle)
-			let g:syntastic_enable_signs=1
-      let g:syntastic_quiet_messages = {'level': 'warnings'}
-			let g:syntastic_mode_map = { 'mode': 'active',
-									   \ 'active_filetypes': [],
-									   \ 'passive_filetypes': ['twig'] }
     endfunction
     "}}}
 
@@ -316,6 +313,86 @@ endif
     \}
     " }}}
 
+    " ShowMotion {{{
+    NeoBundle "boucherm/ShowMotion", {
+    \  'lazy' : 0,
+    \  'autoload' : {
+    \  }
+    \}
+    let bundle = neobundle#get('ShowMotion')
+    function! bundle.hooks.on_post_source(bundle)
+      "*** If your plugins are loaded after your colorscheme
+      highlight SM_SmallMotionGroup cterm=italic                ctermbg=53 gui=italic                guibg=#5f005f
+      highlight SM_BigMotionGroup   cterm=italic,bold,underline ctermbg=54 gui=italic,bold,underline guibg=#5f0087
+      highlight SM_CharSearchGroup  cterm=italic,bold           ctermbg=4  gui=italic,bold           guibg=#3f6691
+
+      "*** Highlights both big and small motions
+      nmap <silent> w <Plug>(show-motion-both-w)
+      nmap <silent> W <Plug>(show-motion-both-W)
+      nmap <silent> b <Plug>(show-motion-both-b)
+      nmap <silent> B <Plug>(show-motion-both-B)
+      nmap <silent> e <Plug>(show-motion-both-e)
+      nmap <silent> E <Plug>(show-motion-both-E)
+
+      "*** Only highlights motions corresponding to the one you typed
+      "nmap <silent> w <Plug>(show-motion-w)
+      "nmap <silent> W <Plug>(show-motion-W)
+      "nmap <silent> b <Plug>(show-motion-b)
+      "nmap <silent> B <Plug>(show-motion-B)
+      "nmap <silent> e <Plug>(show-motion-e)
+      "nmap <silent> E <Plug>(show-motion-E)
+
+      "Show motion for chars:
+      nmap f <Plug>(show-motion-f)
+      nmap t <Plug>(show-motion-t)
+      nmap F <Plug>(show-motion-F)
+      nmap T <Plug>(show-motion-T)
+      nmap ; <Plug>(show-motion-;)
+      nmap , <Plug>(show-motion-,)
+    endfunction
+    " }}}
+
+    " Dash {{{
+    NeoBundle "rizzatti/dash.vim", {
+    \  'lazy' : 0,
+    \  'autoload' : {
+    \  }
+    \}
+    let bundle = neobundle#get('dash.vim')
+    function! bundle.hooks.on_post_source(bundle)
+      map K :Dash<CR>
+    endfunction
+    " }}}
+
+    " PHPQA {{{
+    NeoBundle "jhogendorn/vim-phpqa", {
+    \  'lazy' : 0,
+    \  'autoload' : {
+    \    'commands' : [ 'Phpcc','Phpcs','Phpmd','Php' ],
+    \    'mappings' : [ '<Leader>qc' ]
+    \  }
+    \}
+    let bundle = neobundle#get('vim-phpqa')
+    function! bundle.hooks.on_post_source(bundle)
+      " Don't run messdetector on save (default = 1)
+      let g:phpqa_messdetector_autorun = 0
+
+      " Don't run codesniffer on save (default = 1)
+      let g:phpqa_codesniffer_autorun = 0
+
+      " Show code coverage on load (default = 0)
+      let g:phpqa_codecoverage_autorun = 0
+
+      " Stop the location list opening automatically
+      let g:phpqa_open_loc = 0
+
+      " Clover code coverage XML file
+      " let g:phpqa_codecoverage_file = "/path/to/clover.xml"
+
+      " Show markers for lines that ARE covered by tests (default = 1)
+      let g:phpqa_codecoverage_showcovered = 1
+    endfunction
+    " }}}
     " Lang: Coffee-Script {{{
     NeoBundle "kchmck/vim-coffee-script", {
     \  'lazy' : 1,
@@ -348,6 +425,16 @@ endif
     \  'lazy' : 1,
     \  'autoload' : {
     \    'filetypes' : [ 'jinja2' ]
+    \  }
+    \}
+    " }}}
+
+    "
+    " Lang: Twig {{{
+    NeoBundle "evidens/vim-twig", {
+    \  'lazy' : 1,
+    \  'autoload' : {
+    \    'filetypes' : [ 'html', 'twig', 'html.twig' ]
     \  }
     \}
     " }}}
@@ -415,7 +502,7 @@ set encoding=utf-8
 " Save shift key wear-out :P
 nnoremap ; :
 
-set backup
+set nobackup                        " Backups hinder more than help.
 set writebackup
 set viminfo+=n~/.vim/tmp/viminfo
 
@@ -520,6 +607,7 @@ set laststatus=2				" Always show the file status line
 " PHP
 	autocmd FileType php set cc=80,120
 	autocmd FileType php set keywordprg=pman
+  autocmd BufReadPre,FileReadPre php :EnableFastPHPFolds
 	" autocmd BufEnter *.php :%s/\s\+$//e		" Remove trailing whitespace when opening files.
 
 " Git Commits
