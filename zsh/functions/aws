@@ -1,0 +1,19 @@
+function aws-switch {
+
+  # Pull all the profiles from the ini
+  # cat .aws/config | perl -ne '/\[profile (.*)\]/ && print $1'
+
+  if [ "$#" -eq 1 ]; then
+    export AWS_DEFAULT_PROFILE="$1"
+
+    echo "Utilising $AWS_DEFAULT_PROFILE AWS Profile"
+    return
+  fi
+
+  PROFILE="Default"
+  if [ -n "$AWS_DEFAULT_PROFILE" ]; then
+    PROFILE="$AWS_DEFAULT_PROFILE"
+  fi
+
+  echo "Utilising $PROFILE AWS Profile"
+}
