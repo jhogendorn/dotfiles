@@ -1,12 +1,12 @@
 [hub]
-  protocol = https
+	protocol = https
 [core]
 	filemode = false
 	trustctime = false
 	pager = less -F -X
-  # excludesfile = /Users/joshua/.gitignore_global
-  excludesfile = ~/.gitignore
-  editor = vim
+	# excludesfile = /Users/joshua/.gitignore_global
+	excludesfile = /Users/jhogendorn/.gitignore
+	editor = vim
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool]
@@ -25,22 +25,23 @@
 	private = no
 	browse = yes
 [alias]
-  co = checkout
-  promote = !$ZSH/bin/git-promote
-  wtf     = !$ZSH/bin/git-wtf
-  rank-contributers = !$ZSH/bin/git-rank-contributers
-  count   = !git shortlog -sn
+	co = checkout
+	all = add --all
+	promote = !$ZSH/bin/git-promote
+	wtf	 = !$ZSH/bin/git-wtf
+	rank-contributers = !$ZSH/bin/git-rank-contributers
+	count   = !git shortlog -sn
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
 [color]
-  diff = auto
-  status = auto
-  branch = auto
-  ui = true
+	diff = auto
+	status = auto
+	branch = auto
+	ui = true
 [init]
 [mergetool "Kaleidoscope"]
 	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
 	trustExitCode = true
-  keepBackup = false
+	keepBackup = false
 	prompt = false
 [merge]
 	tool = Kaleidoscope
@@ -48,3 +49,9 @@
 	default = matching
 [mergetool]
 	prompt = false
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
