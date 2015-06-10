@@ -91,3 +91,5 @@ source /usr/local/bin/virtualenvwrapper.sh
 #zprof
 
 export PATH="$PATH:$HOME/.rvm/bin:$HOME/.composer/vendor/bin" # Add RVM to PATH for scripting
+
+export VAGRANT_DEFAULT_PROVIDER=vmware_fusion
