@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Script Setup {{{
+
+set -e          # if one fails, we halt
+set -o nounset  # undefined variables bad juju
+
+# }}}
+
+# Discover Environment {{{
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+BASEPATH=$( cd $SCRIPTPATH/../; pwd -P )
+
+export SCRIPTPATH
+export BASEPATH
+
+# }}}
+
+# Ensure clean exits {{{
+
+finish () {
+  exit
+}
+export -f finish
+
+trap finish INT TERM EXIT
+
+# }}}
+
+sudo -v
+
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+sudo $HOME/Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli --stop
+sudo $HOME/Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli --configure
+sudo $HOME/Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli --start
+
+echo ""
+echo "VMnet repaired, please reattempt."
