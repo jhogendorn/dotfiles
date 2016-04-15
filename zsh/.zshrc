@@ -13,7 +13,7 @@ zstyle :compinstall filename "$HOME/.zshrc"
 autoload -Uz compinit
 compinit
 
-PATH=./bin:$HOME/.dotfiles/bin:/usr/local/bin:$PATH
+PATH=./bin:$HOME/.dotfiles/bin:/usr/local/bin:/usr/local/sbin:$PATH
 
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
@@ -93,3 +93,9 @@ source /usr/local/bin/virtualenvwrapper.sh
 export PATH="$PATH:$HOME/.rvm/bin:$HOME/.composer/vendor/bin" # Add RVM to PATH for scripting
 
 export VAGRANT_DEFAULT_PROVIDER=vmware_fusion
+
+export NVM_DIR=~/.nvm
+  . $(brew --prefix nvm)/nvm.sh
+
+export ANDROID_HOME=/usr/local/opt/android-sdk
+export REACT_EDITOR=vim

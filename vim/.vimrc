@@ -29,6 +29,7 @@ endif
   " Let NeoBundle manage NeoBundle
   " Required:
   NeoBundleFetch 'Shougo/neobundle.vim'
+  let g:neobundle#install_process_timeout = 1500
 
   " }}}
 
@@ -59,7 +60,7 @@ endif
       call unite#custom#source('file_rec/async','sorters','sorter_rank')
       call unite#custom#profile('buffer', 'context.ignorecase', 1)
 
-      nmap <space> [unite]
+      nmap <Space> [unite]
       nnoremap [unite] <nop>
 
       nnoremap <silent> [unite]p :<C-u>Unite -start-insert  -buffer-name=files        file_rec/async<cr>
@@ -127,6 +128,17 @@ endif
     let bundle = neobundle#get('unite-tag')
     function! bundle.hooks.on_post_source(bundle)
       nnoremap <silent> [unite]t :<C-u>Unite -auto-resize -buffer-name=tag tag tag/file<cr>
+    endfunction
+    " }}}
+
+    " FZF {{{
+    NeoBundle "junegunn/fzf.vim", {
+    \  'lazy' : 0,
+    \  'autoload' : {
+    \  },
+    \}
+    let bundle = neobundle#get('fzf.vim')
+    function! bundle.hooks.on_post_source(bundle)
     endfunction
     " }}}
 
@@ -217,6 +229,17 @@ endif
     endfunction
     " }}}
 
+    " GitGutter {{{
+    NeoBundle "airblade/vim-gitgutter", {
+    \  'lazy' : 0
+    \}
+    let bundle = neobundle#get('vim-gitgutter')
+    function! bundle.hooks.on_post_source(bundle)
+      let g:gitgutter_realtime = 1
+      let g:gitgutter_eager = 1
+    endfunction
+    " }}}
+
     " Gundo {{{
     NeoBundle "sjl/gundo.vim", {
     \  'lazy' : 1,
@@ -238,7 +261,7 @@ endif
     \  'lazy' : 1,
     \  'autoload' : {
     \    'commands' : ['IndentGuidesToggle','IndentGuidesEnable','IndentGuidesDisable'],
-    \    'mappings' : [ '<Leader>ig' ]
+    \    'mappings' : [ '<Space>ig' ]
     \  }
     \}
     let bundle = neobundle#get('vim-indent-guides')
@@ -262,7 +285,7 @@ endif
     " Numbers {{{
     NeoBundle "myusuf3/numbers.vim", {
     \  'lazy' : 0,
-    \  'disabled' : 1
+    \  'disabled' : 0
     \}
     " }}}
 
@@ -284,7 +307,7 @@ endif
     \}
     let bundle = neobundle#get('vim-yankstack')
     function! bundle.hooks.on_post_source(bundle)
-      nmap <Leader>p <Plug>yankstack_substitute_older_paste
+      nmap <Leader>pp <Plug>yankstack_substitute_older_paste
             call yankstack#setup() " so it doesn't clobber vim-surround
     endfunction
     "}}}
@@ -292,13 +315,92 @@ endif
     " YouCompleteMe {{{
     NeoBundle "Valloric/YouCompleteMe", {
     \  'lazy' : 0,
+     \ 'build'      : {
+        \ 'mac'     : './install.sh --all',
+        \ 'unix'    : './install.sh --all',
+        \ 'windows' : './install.sh --all',
+        \ 'cygwin'  : './install.sh --all'
+        \ }
     \}
     let bundle = neobundle#get('YouCompleteMe')
     function! bundle.hooks.on_post_source(bundle)
       let g:ycm_complete_in_comments_and_strings=1
-      "let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
+      let g:ycm_autoclose_preview_window_after_completion=1
+      let g:ycm_autoclose_preview_window_after_insertion=1
+      let g:ycm_collect_identifiers_from_tags_files = 1
+      "let g:ycm_key_list_select_completion=['<TAB>', '<C-n>', '<Down>']
       "let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
       let g:ycm_filetype_blacklist={'unite': 1}
+      let g:ycm_semantic_triggers = {}
+      let g:ycm_semantic_triggers.php =
+      \ ['->', '::', '(', 'use ', 'namespace ', '\']
+    endfunction
+    " }}}
+
+    " TernJS {{{
+    NeoBundle "ternjs/tern_for_vim", {
+    \  'lazy' : 0,
+     \ 'build'      : {
+        \ 'mac'     : 'npm install',
+        \ 'unix'    : 'npm install',
+        \ 'windows' : 'npm install',
+        \ 'cygwin'  : 'npm install'
+        \ }
+    \}
+    let bundle = neobundle#get('tern_for_vim')
+    function! bundle.hooks.on_post_source(bundle)
+    endfunction
+    " }}}
+
+    " UltiSnips {{{
+    NeoBundle "SirVer/ultisnips", {
+    \  'lazy' : 0
+    \}
+    NeoBundle "honza/vim-snippets", {
+    \  'lazy' : 0
+    \}
+
+    let bundle = neobundle#get('ultisnips')
+    function! bundle.hooks.on_post_source(bundle)
+      let g:UltiSnipsEditSplit="vertical"
+
+      "let g:UltiSnipsExpandTrigger       = "<c-tab>"
+      let g:UltiSnipsExpandSnippetOrJump = "<enter>"
+      let g:UltiSnipsJumpForwardTrigger  = "<c-j>"
+      let g:UltiSnipsJumpBackwardTrigger = "<c-k>"
+      "let g:UltiSnipsJumpForwardTrigger  = "<tab>"
+      "let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+      " Enable tabbing through list of results
+      function! g:UltiSnips_Complete()
+          call UltiSnips#ExpandSnippet()
+          if g:ulti_expand_res == 0
+              if pumvisible()
+                  return "\<C-n>"
+              else
+                  call UltiSnips#JumpForwards()
+                  if g:ulti_jump_forwards_res == 0
+                     return "\<TAB>"
+                  endif
+              endif
+          endif
+          return ""
+      endfunction
+
+      au InsertEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+
+      " Expand snippet or return
+      let g:ulti_expand_res = 0
+      function! Ulti_ExpandOrEnter()
+          call UltiSnips#ExpandSnippet()
+          if g:ulti_expand_res
+              return ''
+          else
+              return "\<return>"
+      endfunction
+
+      " Set <space> as primary trigger
+      inoremap <return> <C-R>=Ulti_ExpandOrEnter()<CR>
     endfunction
     " }}}
 
@@ -313,6 +415,17 @@ endif
       let g:syntastic_mode_map = { 'mode': 'active',
                      \ 'active_filetypes': [],
                      \ 'passive_filetypes': ['twig'] }
+      let g:syntastic_javascript_checkers = ['eslint'] ", 'jshint']
+      " let g:syntastic_html_tidy_ignore_errors=[" proprietary attribute " ,"trimming empty <", "unescaped &" , "lacks \"action", "is not recognized!", "discarding unexpected"] " fix for angularjsisms
+
+      " Override eslint with local version where necessary.
+      let local_eslint = finddir('node_modules', '.;') . '/.bin/eslint'
+      if matchstr(local_eslint, "^\/\\w") == ''
+        let local_eslint = getcwd() . "/" . local_eslint
+      endif
+      if executable(local_eslint)
+        let g:syntastic_javascript_eslint_exec = local_eslint
+      endif
     endfunction
     "}}}
 
@@ -323,7 +436,29 @@ endif
     " }}}
 
     " Airline {{{
-    NeoBundle "bling/vim-airline", {
+    NeoBundle "vim-airline/vim-airline", {
+    \  'lazy' : 0
+    \}
+    let bundle = neobundle#get('vim-airline')
+    "function! bundle.hooks.on_post_source(bundle)
+      let g:airline#extensions#tabline#enabled = 1
+      let g:airline_powerline_fonts = 1
+      let g:airline_theme = 'powerlineish'
+
+      if !exists('g:airline_symbols')
+        let g:airline_symbols = {}
+      endif
+
+      let g:airline_left_sep = ''
+      let g:airline_left_alt_sep = ''
+      let g:airline_right_sep = ''
+      let g:airline_right_alt_sep = ''
+      let g:airline_symbols.branch = ''
+      let g:airline_symbols.readonly = ''
+      let g:airline_symbols.linenr = ''
+    "endfunction
+
+    NeoBundle "vim-airline/vim-airline-themes", {
     \  'lazy' : 0
     \}
     " }}}
@@ -377,6 +512,13 @@ endif
 
     " delimitMate {{{
     NeoBundle "Raimondi/delimitMate", {
+    \  'lazy' : 0,
+    \  'disabled' : 1
+    \}
+    " }}}
+
+    " lexima {{{
+    NeoBundle "cohama/lexima.vim", {
     \  'lazy' : 0
     \}
     " }}}
@@ -448,6 +590,33 @@ endif
     endfunction
     " }}}
 
+    " PHP Completion {{{
+    NeoBundle "shawncplus/phpcomplete.vim", {
+    \  'lazy' : 0
+    \}
+    NeoBundle "m2mdas/phpcomplete-extended", {
+    \  'lazy' : 0,
+    \  'disabled' : 1,
+    \}
+      NeoBundle "m2mdas/phpcomplete-extended-symfony", {
+      \  'lazy' : 0,
+      \  'disabled' : 1,
+      \}
+    let bundle = neobundle#get('phpcomplete-extended')
+    function! bundle.hooks.on_post_source(bundle)
+      autocmd  FileType  php setlocal omnifunc=phpcomplete_extended#CompletePHP
+    endfunction
+
+    "NeoBundle "mkusher/padawan.vim", {
+    "\  'lazy' : 0,
+    "\  'disabled' : 0,
+    "\}
+    "let bundle = neobundle#get('padawan.vim')
+    "function! bundle.hooks.on_post_source(bundle)
+    "  let g:padawan#composer_command = "./bin/composer"
+    "endfunction
+    " }}}
+
     " PHPQA {{{
     NeoBundle "jhogendorn/vim-phpqa", {
     \  'lazy' : 0,
@@ -506,13 +675,13 @@ endif
     \}
     let bundle = neobundle#get('vim-quickhl')
     function! bundle.hooks.on_post_source(bundle)
-      nmap <Space>m <Plug>(quickhl-manual-this)
-      xmap <Space>m <Plug>(quickhl-manual-this)
-      nmap <Space>M <Plug>(quickhl-manual-reset)
-      xmap <Space>M <Plug>(quickhl-manual-reset)
+      nmap <Leader>m <Plug>(quickhl-manual-this)
+      xmap <Leader>m <Plug>(quickhl-manual-this)
+      nmap <Leader>M <Plug>(quickhl-manual-reset)
+      xmap <Leader>M <Plug>(quickhl-manual-reset)
 
-      nmap <Space>j <Plug>(quickhl-cword-toggle)
-      nmap <Space>] <Plug>(quickhl-tag-toggle)
+      nmap <Leader>j <Plug>(quickhl-cword-toggle)
+      nmap <Leader>] <Plug>(quickhl-tag-toggle)
       map H <Plug>(operator-quickhl-manual-this-motion)
     endfunction
     " }}}
@@ -539,6 +708,41 @@ endif
     \}
     " }}}
 
+    " Vim Expand Region {{{
+    NeoBundle "terryma/vim-expand-region", {
+    \  'lazy' : 0,
+    \  'autoload' : {
+    \  }
+    \}
+    let bundle = neobundle#get('vim-expand-region')
+    function! bundle.hooks.on_post_source(bundle)
+        vmap v <Plug>(expand_region_expand)
+        vmap <C-v> <Plug>(expand_region_shrink)
+    endfunction
+    " }}}
+
+    " Argumentative {{{
+    NeoBundle "PeterRincker/vim-argumentative", {
+    \  'lazy' : 0,
+    \  'autoload' : {
+    \  }
+    \}
+    let bundle = neobundle#get('vim-argumentative')
+    function! bundle.hooks.on_post_source(bundle)
+    endfunction
+    " }}}
+
+    " Enmasse {{{
+    NeoBundle "Olical/vim-enmasse", {
+    \  'lazy' : 0,
+    \  'autoload' : {
+    \  }
+    \}
+    let bundle = neobundle#get('vim-enmasse')
+    function! bundle.hooks.on_post_source(bundle)
+    endfunction
+    " }}}
+
     " Lang: Coffee-Script {{{
     NeoBundle "kchmck/vim-coffee-script", {
     \  'lazy' : 0,
@@ -555,9 +759,9 @@ endif
     \    'filetypes' : [ 'markdown', 'md' ]
     \  }
     \}
-    " }}}
     au BufNewFile,BufReadPost *.md set filetype=markdown
     let g:markdown_fenced_languages = ['coffee', 'css', 'erb=eruby', 'javascript', 'js=javascript', 'json=javascript', 'ruby', 'sass', 'xml', 'html', 'shell=sh']
+    " }}}
 
     " Lang: Stylus {{{
     NeoBundle "wavded/vim-stylus", {
@@ -623,6 +827,54 @@ endif
     endfunction
     " }}}
 
+    " Lang: Javascript {{{
+    NeoBundle "pangloss/vim-javascript", {
+    \  'lazy' : 0,
+    \}
+    let bundle = neobundle#get('vim-javascript')
+    function! bundle.hooks.on_post_source(bundle)
+    endfunction
+    " }}}
+
+    " Lang: JSON {{{
+    NeoBundle "elzr/vim-json", {
+    \  'lazy' : 0,
+    \}
+    let bundle = neobundle#get('vim-json')
+    function! bundle.hooks.on_post_source(bundle)
+      au! BufRead,BufNewFile *.json set filetype=json
+      augroup json_autocmd
+        autocmd!
+        autocmd FileType json set autoindent
+        autocmd FileType json set formatoptions=tcq2l
+        "autocmd FileType json set textwidth=78 shiftwidth=2
+        "autocmd FileType json set softtabstop=2 tabstop=8
+        "autocmd FileType json set expandtab
+        autocmd FileType json set foldmethod=syntax
+      augroup END
+    endfunction
+    " }}}
+
+    " Lang: JSX {{{
+    NeoBundle "mxw/vim-jsx", {
+    \  'lazy' : 0,
+    \}
+    let bundle = neobundle#get('vim-jsx')
+    function! bundle.hooks.on_post_source(bundle)
+      let g:jsx_ext_required = 0 " Allow JSX in normal JS files
+    endfunction
+    " }}}
+
+    " Lang: OpenSCAD {{{
+    NeoBundle "sirtaj/vim-openscad", {
+    \  'lazy' : 0,
+    \}
+    let bundle = neobundle#get('vim-openscad')
+    function! bundle.hooks.on_post_source(bundle)
+    endfunction
+    " }}}
+
+
   " }}}
 
   call neobundle#end()
@@ -654,9 +906,6 @@ endif
 " GENERAL SETTINGS {{{
 " ================
 set encoding=utf-8
-
-" Save shift key wear-out :P
-nnoremap ; :
 
 set nobackup                        " Backups hinder more than help.
 set writebackup
@@ -718,7 +967,8 @@ set ttimeoutlen=50
 set mouse=a                        " Turn on mouse support for scrolling
 set ttymouse=sgr                   " Fix the mouse in wide windows in iTerm2 http://www.reddit.com/r/vim/comments/282gr6/i_didnt_know_you_could_do_this_with_the_mouse/ci6yiep
 
-let mapleader = ','                " Set the map leader to comma
+"let mapleader = ','                " Set the map leader to comma
+let mapleader = "\<Space>"         " Use space as the leader
 
 set exrc                           " enable per-directory .vimrc files
 set secure                         " disable unsafe commands in local .vimrc files
@@ -736,24 +986,6 @@ let g:ruby_path = system('rvm current')
 "
 
 set laststatus=2        " Always show the file status line
-
-    " AIRLINE {{{
-        let g:airline#extensions#tabline#enabled = 1
-        let g:airline_powerline_fonts = 1
-        let g:airline_theme = 'powerlineish'
-
-        if !exists('g:airline_symbols')
-          let g:airline_symbols = {}
-        endif
-
-        let g:airline_left_sep = ''
-        let g:airline_left_alt_sep = ''
-        let g:airline_right_sep = ''
-        let g:airline_right_alt_sep = ''
-        let g:airline_symbols.branch = ''
-        let g:airline_symbols.readonly = ''
-        let g:airline_symbols.linenr = ''
-    " }}}
 
 " }}}
 
@@ -789,16 +1021,33 @@ set laststatus=2        " Always show the file status line
   " Change working dir to current
   nnoremap <Leader>cd :cd %:p:h<CR>:pwd<CR>
 
-  nnoremap <space><space> :noh<CR>
+  " Hide highlights
+  nnoremap <Leader><Leader> :noh<CR>
 
   " Fly between buffers
   nnoremap <Leader>l :ls<CR>:b<space>
 
-  " Always use magic
-  nnoremap / /\v
+  " Always use no magic
+  nnoremap / /\V
+
+  " Helper for search/replace repeatability
+  vnoremap <silent> s //e<C-r>=&selection=='exclusive'?'+1':''<CR><CR>
+      \:<C-u>call histdel('search',-1)<Bar>let @/=histget('search',-1)<CR>gv
+  omap s :normal vs<CR>
 
   " Make Y work like everything else
   map Y y$
+
+  " Go to the end of pasted blocks so you can just smash p to multipaste
+  vnoremap <silent> y y`]
+  vnoremap <silent> p p`]
+  nnoremap <silent> p p`]
+
+  " Quickly reselect the last paste
+  noremap gV `[v`]
+
+  " Stop that q window popping up
+  map q: :q
 
   " Mappings for tag navigation
   " Use [] for back/forward. Use the g behaviour by default
@@ -841,16 +1090,18 @@ set laststatus=2        " Always show the file status line
     endif
     return 1
   endfunction
-  augroup vimrcAutoView
-    autocmd!
-    " Autosave & Load Views.
-    autocmd BufWritePost,BufLeave,WinLeave ?* if MakeViewCheck() | mkview | endif
-    autocmd BufWinEnter ?* if MakeViewCheck() | silent loadview | endif
-    if version >= 702
-      " Clear matches when you leave a window, performance tweak
-      autocmd BufWinLeave * call clearmatches()
-    endif
-  augroup end
+  " Disabled 200715 This just throws errors a lot of the time for me and I
+  " reset the view anyway. lets see how annoying disabling it ends up being
+  "augroup vimrcAutoView
+  "  autocmd!
+  "  " Autosave & Load Views.
+  "  autocmd BufWritePost,BufLeave,WinLeave ?* if MakeViewCheck() | mkview | endif
+  "  autocmd BufWinEnter ?* if MakeViewCheck() | silent loadview | endif
+  "  if version >= 702
+  "    " Clear matches when you leave a window, performance tweak
+  "    autocmd BufWinLeave * call clearmatches()
+  "  endif
+  "augroup end
 "}}}
 
 " OSX TERMINAL FIXES {{{

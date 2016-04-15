@@ -1,0 +1,14 @@
+snippet drc "Dump response content" bw
+var_dump(\$response->getContent());
+endsnippet
+
+snippet ddo "Dump Doctrine Object" b
+\Doctrine\Common\Util\Debug::dump($1);
+endsnippet
+
+snippet dvd "Deep var dump" b
+ini_set('xdebug.var_display_max_depth', ${2:5});
+ini_set('xdebug.var_display_max_children', ${3:256});
+ini_set('xdebug.var_display_max_data', ${4:1024});
+var_dump($1);
+endsnippet
