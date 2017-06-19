@@ -1,2 +1,4 @@
 .DS_Store
 vim/.vim/.netrwhist
+vim/.vim/plugged/*
+vim/.vim/autoload/plug.vim.old
