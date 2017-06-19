@@ -13,6 +13,8 @@
 	prompt = false
 [diff]
 	tool = Kaleidoscope
+  compactionHeuristic = true
+	algorithm = patience
 [user]
 	name = Joshua Hogendorn
 	email = jhogendorn@gmail.com
