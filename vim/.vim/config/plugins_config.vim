@@ -1,0 +1,3 @@
+
+call yankstack#setup()
+
